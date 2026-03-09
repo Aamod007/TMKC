@@ -1,82 +1,146 @@
-# TMKC - Task Monitoring and Kernel Controller
+<div align="center">
 
-**TMKC** is a lightweight, terminal-based system monitor and process controller built with Python and [Textual](https://github.com/Textualize/textual). It provides a real-time overview of your system's performance and allows you to manage running processes directly from the command line with a modern TUI (Terminal User Interface).
+# 🚀 TMKC (Task Monitoring & Kernel Controller)
 
-![TMKC TUI](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
-*(Note: Screenshot placeholder)*
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Textual](https://img.shields.io/badge/TUI-Textual-green?style=for-the-badge&logo=terminal&logoColor=white)](https://textual.textualize.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/Aamod007/TMKC/graphs/commit-activity)
 
-## 🚀 Features
+**A modern, cross-platform terminal-based system monitor and process manager.**
+Built for developers and sysadmins who live in the terminal.
 
-*   **Real-time System Monitoring**:
-    *   Live CPU usage tracking.
-    *   Real-time Memory usage (Used vs Total).
-*   **Process Management**:
-    *   View running processes with details (PID, Name, Status, CPU%, Memory).
-    *   Auto-sorting by CPU usage to highlight resource-heavy tasks.
-*   **Process Control**:
-    *   **Kill**: Terminate unresponsive or unwanted processes.
-    *   **Suspend**: Temporarily pause a process to free up resources.
-    *   **Resume**: Continue execution of suspended processes.
-*   **Cross-Platform**: Works on Windows, macOS, and Linux (thanks to Python & psutil).
+[Features](#-key-features) •
+[Installation](#-installation) •
+[Usage](#-usage) •
+[Architecture](#-architecture) •
+[Roadmap](#-roadmap) •
+[Contributing](#-contributing)
 
-## 🛠️ Installation
+![TMKC Demo Placeholder](https://placehold.co/800x400/1a1a1a/FFF?text=TMKC+TUI+Screenshot)
+
+</div>
+
+---
+
+## 🌟 Key Features
+
+TMKC combines the functionality of `top`/`htop` with an interactive, modern UI.
+
+### 📊 Real-Time Monitoring
+- **CPU Visualization**: Live tracking of overall CPU utilization.
+- **Memory Analytics**: Instant view of RAM usage (Used vs Total).
+- **Process Metrics**: Detailed statistics per process including PID, Name, Status, CPU%, and Memory consumption.
+
+### 🎮 Interactive Control
+- **Process Management**:
+  - `Kill`: Force terminate unresponsive applications.
+  - `Suspend`: Pause execution to free up CPU cycles without losing state.
+  - `Resume`: Continue execution of paused processes.
+- **Smart Sorting**: Automatically surfaces resource-hungry processes to the top.
+- **Keyboard Navigation**: Fully keyboard-driven workflow for efficiency.
+
+### 🌍 Cross-Platform
+- **Windows**: Native support (tested on Windows 10/11).
+- **Linux**: Works on all major distributions.
+- **macOS**: Fully compatible.
+
+---
+
+## 🛠 Installation
 
 ### Prerequisites
+- Python 3.8 or higher
+- Terminal with UTF-8 support (e.g., Windows Terminal, iTerm2, Alacritty)
 
-*   Python 3.8 or higher
-*   pip (Python package manager)
+### Quick Start
 
-### Steps
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Aamod007/TMKC.git
+   cd TMKC
+   ```
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Aamod007/TMKC.git
-    cd TMKC
-    ```
+2. **Set Up Environment (Recommended)**
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   .\venv\Scripts\activate
+   
+   # Linux/macOS
+   source venv/bin/activate
+   ```
 
-2.  **Install dependencies:**
-    It is recommended to use a virtual environment.
-    ```bash
-    # Create virtual environment (optional but recommended)
-    python -m venv venv
-    
-    # Activate virtual environment
-    # Windows:
-    .\venv\Scripts\activate
-    # Linux/macOS:
-    source venv/bin/activate
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    # Install requirements
-    pip install -r requirements.txt
-    ```
+---
 
-## 🖥️ Usage
+## 🖥 Usage
 
-Run the application using Python:
+Launch the application directly from your terminal:
 
 ```bash
 python tmkc.py
 ```
 
-### ⌨️ Controls / Keybindings
+### ⌨️ Key Bindings
 
 | Key | Action | Description |
-| :--- | :--- | :--- |
-| **`k`** | **Kill Process** | Terminates the currently selected process. |
-| **`s`** | **Suspend** | Suspends (pauses) the currently selected process. |
-| **`r`** | **Resume** | Resumes a previously suspended process. |
-| **`q`** | **Quit** | Exits the application. |
-| **`↑` / `↓`** | **Navigation** | Move selection up or down in the process list. |
+|:---:|:---|:---|
+| <kbd>k</kbd> | **Kill** | Terminate the selected process immediately (SIGTERM/SIGKILL). |
+| <kbd>s</kbd> | **Suspend** | Pause the selected process execution. |
+| <kbd>r</kbd> | **Resume** | Resume a suspended process. |
+| <kbd>q</kbd> | **Quit** | Exit the application safely. |
+| <kbd>↑</kbd> / <kbd>↓</kbd> | **Navigate** | Scroll through the process list. |
 
-## 📦 Dependencies
+---
 
-*   [**Textual**](https://textual.textualize.io/): A Rapid Application Development framework for Python TUI.
-*   [**psutil**](https://psutil.readthedocs.io/): Cross-platform library for retrieving information on running processes and system utilization.
+## 🏗 Architecture
+
+TMKC is built using a reactive architecture powered by **Textual**.
+
+- **Core Logic (`tmkc.py`)**:
+  - `SystemMonitor`: A reactive widget that polls `psutil` for global system stats.
+  - `ProcessTable`: A dynamic data table that updates in real-time. It handles the complexity of diffing process lists to minimize UI redraws.
+  - `TMKCApp`: The main application controller handling input events and coordinating between widgets.
+- **Data Layer**:
+  - Uses `psutil` for cross-platform system calls.
+  - Handles permission errors gracefully (e.g., trying to kill a root process).
+
+---
+
+## 🗺 Roadmap
+
+- [ ] **Network Monitoring**: Add real-time upload/download speeds.
+- [ ] **Disk I/O**: Track read/write operations per process.
+- [ ] **Process Filtering**: Search bar to filter processes by name.
+- [ ] **Tree View**: Visualize process hierarchy (parent/child relationships).
+- [ ] **Themes**: Customizable color schemes (Dracula, Nord, Monokai).
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Here's how you can help:
+
+1.  Fork the repository.
+2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
+
+---
 
 ## 📄 License
 
-This project is open source.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+Made with ❤️ by Aamod using Python & Textual
+</div>
